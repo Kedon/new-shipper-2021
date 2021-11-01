@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "shipper-test",
-    "slug": "shipper-test",
+    "name": "appshipper",
+    "slug": "appshipper",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
     ]
   },
-  "name": "shipper-test"
+  "name": "appshipper"
 }

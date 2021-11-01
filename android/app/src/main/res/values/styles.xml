@@ -1,6 +1,8 @@
 <resources>
   <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
     <item name="android:textColor">@android:color/black</item>
+    <item name="android:datePickerDialogTheme">@style/Dialog.Theme</item>
+    <item name="android:timePickerDialogTheme">@style/Dialog.Theme</item>
     <item name="android:editTextStyle">@style/ResetEditText</item>
   </style>
   <style name="ResetEditText" parent="@android:style/Widget.EditText">
@@ -12,5 +14,11 @@
     <!-- Below line is handled by '@expo/configure-splash-screen' command and it's discouraged to modify it manually -->
     <item name="android:windowBackground">@drawable/splashscreen</item>
     <!-- Customize your splash screen theme here -->
+  </style>
+  <style name="Dialog.Theme" parent="Theme.AppCompat.Light.Dialog">
+    <!-- BackgroundColor of the date modal -->
+    <item name="colorAccent">#C6002C</item>
+    <!-- Change textColor of the date modal -->
+    <item name="android:textColorPrimary">#000000</item>
   </style>
 </resources>
