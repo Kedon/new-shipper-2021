@@ -4,25 +4,37 @@ import {
     StatusBar,
     StyleSheet,
     View,
-    Text
+    Text,
+    Image
 } from 'react-native';
-import { isSignedIn, onSignOut } from '../config/auth'
+import { isSignedIn, onSignOut, onSignIn } from '../config/auth'
 import { connect } from 'react-redux';
 import { userData, loadingAuth, userToken } from '../../redux/actions/userActions';
 import api from '../screens/register/auth-service'
 import colorTheme from '../config/theme.style'
+import { Profile } from "react-native-fbsdk-next";
+import OneSignal from 'react-native-onesignal';
 
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
+        backgroundColor: colorTheme.PRIMARY_COLOR
     },
     horizontal: {
         flexDirection: 'row',
         justifyContent: 'center',
         padding: 10,
     },
+    gradientContainer: {
+      flex: 1,
+      height: '100%',
+      width: '100%',
+      position: 'absolute',
+      justifyContent: 'center', alignItems: 'center'
+    }
+  
 });
 
 class AuthLoadingScreen extends React.Component {
@@ -34,10 +46,57 @@ class AuthLoadingScreen extends React.Component {
         this.navigateAsync();
     }
 
-    componentDidMount() {
-      this.navigateAsync()
+    componentDidMount = async () => {
+      const currentProfile = await this.getFacebookUserData()
+      if(typeof currentProfile !== 'undefined'){
+        const fb = await api.newAuthenticationFB(currentProfile.userID).then( res => {
+          this.appSignIn(res.data)
+          this.setState({ loading: false })
+        }).catch( err => {
+          console.log(err && err.response && err.response.status)
+          if(err && err.response && err.response.status === 404){
+            this.setState({ loading: false })
+            navigation.navigate('EmailPage', { data: {
+              facebookName: currentProfile.name,
+              facebookId:  currentProfile.userID,
+              facebookImage: currentProfile.imageURL ? `${currentProfile.imageURL.replace('height=100','height=700').replace('width=100','width=700')}`: null
+            } })
+          }
+        })
+      } else {
+        this.navigateAsync()
+      }
     }
 
+    appSignIn = async (data) => {
+      userDataSave(data.user)
+      this.getUserInfo(data.token)
+      OneSignal.setExternalUserId(user.userId);
+      OneSignal.sendTag("USER", user.userId);
+      try {
+        await onSignIn(data.token)
+        //
+      } catch (error) {
+        console.warn(error)
+      }
+  
+  
+    }
+
+    getFacebookUserData = async () => {
+      return await Profile.getCurrentProfile().then(
+        async (currentProfile) => {
+          console.log(JSON.stringify(currentProfile))
+          if (currentProfile) {
+            console.log("The current logged user is: " +
+              currentProfile.name
+              + ". His profile id is: " +
+              currentProfile.userID
+            );
+            return currentProfile
+          }
+        })
+    }
 
     navigateAsync =  () => {
       const { userData, loadingAuth, userToken } = this.props;
@@ -70,12 +129,13 @@ class AuthLoadingScreen extends React.Component {
         const { user, loadingAuth } = this.props.user
         return (
             <View style={styles.container}>
-                <ActivityIndicator color={colorTheme.PRIMARY_COLOR} size="large" />
+                <ActivityIndicator color={colorTheme.WHITE} size="large" />
                 <StatusBar barStyle="default" />
             </View>
         );
     }
 }
+
 
 /** Redux */
 const mapStateToProps = state => {

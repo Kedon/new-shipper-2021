@@ -21,9 +21,10 @@ import { connect } from 'react-redux';
 import { preferencesData } from '../../../redux/actions/preferencesActions';
 import { userData, userToken } from '../../../redux/actions/userActions';
 import OneSignal from 'react-native-onesignal';
+import { LoginManager, Profile } from "react-native-fbsdk-next";
 
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 
 // import Loader from 'react-native-mask-loader';
@@ -152,28 +153,103 @@ class LoginPage extends React.Component {
     await api.authentication({ email: email, password: password })
       .then(async res => {
         this.setState({ loading: false })
-        userDataSave(res.data.user)
-        this.getUserInfo(res.data.token)
-        OneSignal.setExternalUserId(res.data.user.userId);
-        OneSignal.sendTag("USER", res.data.user.userId);
-        try {
-          await onSignIn(res.data.token)
-          //
-        } catch (error) {
-          console.warn(error)
-        }
-
+        this.appSignIn(res.data)
       })
       .catch(err => {
         this.setState({ showDownAlert: true, errorMessage: err && err.data && err.data.message })
         console.log(JSON.stringify(err))
       })
   }
-  facebookLogin = async () => {
+
+  appSignIn = async (data) => {
+    userDataSave(data.user)
+    this.getUserInfo(data.token)
+    //OneSignal Init Code
+    
+    try {
+      await onSignIn(data.token)
+      //
+    } catch (error) {
+      console.warn(error)
+    }
+
+
+  }
+
+  facebookRegister = async () => {
     const { navigation } = this.props;
+    const currentProfile = await this.getFacebookUserData()
+    this.setState({ loading: true })
+    if(currentProfile){
+      const fb = await api.newAuthenticationFB(currentProfile.userID).then( res => {
+        this.appSignIn(res.data)
+        this.setState({ loading: false })
+      }).catch( err => {
+        console.log(err && err.response && err.response.status)
+        if(err && err.response && err.response.status === 404){
+          this.setState({ loading: false })
+          navigation.navigate('EmailPage', { data: {
+            facebookName: currentProfile.name,
+            facebookId:  currentProfile.userID,
+            facebookImage: currentProfile.imageURL ? `${currentProfile.imageURL.replace('height=100','height=700').replace('width=100','width=700')}`: null
+          } })
+        }
+      })
 
-    navigation.navigate("LoginFacebookPage")
+      //console.log(fb)
+      
+      //VERIFICA SE EXISTE UMA CONTA COM A ID DO FACEBOOK
+      
+      /**/
 
+    } else {
+      this.setState({ loading: true })
+      LoginManager.logInWithPermissions(["public_profile"]).then(
+        async (result) => {
+          if (result.isCancelled) {
+            this.setState({ loading: false })
+            console.warn("Login cancelled");
+          } else {
+            //this.setState({ loading: false })
+            setTimeout(async () => {
+              this.facebookRegister()
+            }, 1000)
+            console.log(`currentProfile: ${result}`)
+            console.log(
+              "Login success with permissions: " +
+                result.grantedPermissions.toString()
+            );
+          }
+        },
+        (error) => {
+          this.setState({ loading: false })
+          console.warn("Login fail with error: " + error);
+        }
+      );
+    }
+    //
+    //navigation.navigate("LoginFacebookPage")
+    /**/
+  }
+
+  facebookLogin = async () => {
+    const currentProfile = await this.getFacebookUserData()
+    console.log(JSON.stringify(currentProfile))
+  }
+
+  getFacebookUserData = async () => {
+    return await Profile.getCurrentProfile().then(
+      async (currentProfile) => {
+        console.log(JSON.stringify(currentProfile))
+        if (currentProfile) {
+          console.log("The current logged user is: " +
+            currentProfile.name
+            + ". His profile id is: " +
+            currentProfile.userID
+          );
+          return currentProfile
+        }
+      })
   }
 
   async getUserInfo(token) {
@@ -241,6 +317,11 @@ class LoginPage extends React.Component {
       //   imageSource={this._image}
       //   backgroundStyle={styles.loadingBackgroundStyle}>
       <View style={styles.content}>
+        {loading &&
+          <View style={styles.loading} >
+            <ActivityIndicator color={theme.PRIMARY_COLOR} />
+          </View>
+        }
         <StatusBar barStyle="light-content" />
         <Image source={require('../../assets/images/bkg-gradient-red.png')} style={styles.gradientContainer} />
         <View style={styles.imageOverlay}></View>
@@ -251,7 +332,7 @@ class LoginPage extends React.Component {
         >
           <SafeAreaView style={[styles.container]}>
             <ThemeProvider theme={eltheme} style={{ maxHeight: screenHeight - 90, backgroundColor: '#000' }}>
-              <View style={styles.form} >
+              <View style={styles.form}>
                 <ScrollView
                   style={styles.messages}
                   scrollsToTop={true}
@@ -306,10 +387,16 @@ class LoginPage extends React.Component {
                       style={styles.buttonStyle}
                       onPress={this.enter}
                       underlayColor='#fff'>
-                      <Text style={{ color: theme.PRIMARY_COLOR, textAlign: 'center', fontSize: 18 }}>{loading ? <ActivityIndicator color={theme.PRIMARY_COLOR} /> :' Entrar'}</Text>
+                      <Text style={{ color: theme.PRIMARY_COLOR, textAlign: 'center', fontSize: 18 }}>{' Entrar'}</Text>
                     </TouchableOpacity>
                     {/* <Button title='Entrar' onPress={this.enter} buttonStyle={styles.buttonStyle} /> */}
                     <Button title='Esqueci minha senha' onPress={this.forgetPassword} type="clear" color='white' />
+                    <Button onPress={this.facebookRegister}
+                      buttonStyle={{ marginBottom: 10, marginTop: 20, borderWidth: 1, borderRadius: 30 }}
+                      icon={
+                        <Image style={{ width: 20, height: 20, tintColor: '#fff', marginRight: 10 }} source={require('../../assets/images/icons/facebook.png')} />}
+                      iconLeft title='Entrar com facebook' type="outline" />
+
                   </View>
                 </ScrollView>
               </View>
@@ -320,11 +407,11 @@ class LoginPage extends React.Component {
           <ThemeProvider theme={eltheme} style={styles.registerButtons}>
             <View style={styles.register}>
               <Button title='Criar conta' onPress={this.register} type="outline" buttonStyle={{ marginBottom: 10, borderWidth: 1, borderRadius: 30 }} />
-              <Button onPress={this.facebookLogin}
+              {/*<Button onPress={this.facebookRegister}
                 buttonStyle={{ marginBottom: 10, borderWidth: 1, borderRadius: 30 }}
                 icon={
                   <Image style={{ width: 20, height: 20, tintColor: '#fff', marginRight: 10 }} source={require('../../assets/images/icons/facebook.png')} />}
-                iconLeft title='Cadastrar com facebook' type="outline" />
+                iconLeft title='Cadastrar com facebook' type="outline" />*/}
             </View>
             <Text style={styles.terms}>
                   Ao tocar em entrar, você concorda com os nossos <Text onPress={() => this.browser('Termos', 'http://appshipper.com.br/docs/termos_de_uso.html')} style={styles.termLink}>Termos</Text>. Saiba como processamos seus dados em nossa <Text onPress={() => this.browser('Política de Privacidade', 'http://appshipper.com.br/docs/politicas_de_privacidade.html ')} style={styles.termLink}>Política de Privacidade</Text> e <Text onPress={() => this.browser('Políticas de Cookies', 'http://appshipper.com.br/docs/politicas_de_privacidade.html')} style={styles.termLink}>Política de Cookies</Text>.
@@ -361,7 +448,20 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    position: 'relative'
   },
+  loading: {
+    width: width,
+    height: height,
+    position: 'absolute',
+    backgroundColor: `rgba(255,255,255,.5)`,
+    top: 0,
+    left: 0,
+    zIndex: 999,
+    justifyContent: 'center', alignItems: 'center'
+
+  },
+  
   buttonStyle: {
     padding: 10,
     borderRadius: 30,
@@ -380,6 +480,7 @@ const styles = StyleSheet.create({
     opacity: 0.0,
     position: 'absolute',
   },
+  
   form: {
     marginTop: 40,
     color: '#fff',
@@ -402,6 +503,7 @@ const styles = StyleSheet.create({
   },
   register: {
     padding: 10,
+    marginHorizontal: 20,
   },
   root: {
     flex: 1,
