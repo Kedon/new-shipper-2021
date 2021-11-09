@@ -27,8 +27,8 @@ class BirthdayPage extends React.Component {
 
                 email: route.params.email,
                 name: route.params.name,
-                birthDate: birthDate
-
+                birthDate: birthDate,
+                data: route.params.data ? route.params.data : null
         })
     }
     render() {

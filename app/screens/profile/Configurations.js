@@ -17,6 +17,7 @@ import { noAthorized } from '../../components/Utils'
 import { connect } from 'react-redux';
 import { userDataUpdate,  userData, userToken } from '../../../redux/actions/userActions';
 import { preferencesData } from '../../../redux/actions/preferencesActions'
+import { LoginManager } from "react-native-fbsdk-next";
 
 
 
@@ -157,6 +158,7 @@ class Configurations extends Component {
       preferencesData([])
       userToken(null)
       this.props.navigation.navigate('Timeline')
+      LoginManager.logOut()
     })
   }
   setSelectedValue(value) {

@@ -54,7 +54,8 @@ class GenrePage extends React.Component {
               ageRange: minAge+","+maxAge,
               looking: male && female ? 'MALE,FEMALE' : male ? 'MALE' : 'FEMALE',
               distance: distance,
-              genre: genre
+              genre: genre,
+              data: route.params.data ? route.params.data : null
             })
         }
 

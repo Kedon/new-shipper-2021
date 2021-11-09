@@ -8,6 +8,7 @@ import { Input, Button, ThemeProvider } from 'react-native-elements';
 //import ImagePicker from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import FastImage, { FastImageProps } from 'react-native-fast-image';
+import RNFetchBlob from 'rn-fetch-blob'
 
 
 let theme = {
@@ -26,10 +27,46 @@ class AddPhotosPage extends React.Component {
         photos: []
     }
     componentDidMount = async () => {
+        const { route } = this.props;
+
         setTimeout(() => {
             Keyboard.dismiss();
         }, 200);
         // this.getPhotos()
+        if(route && route.params && route.params.data && route.params.data.facebookImage){
+            console.log(route.params.data.facebookImage)
+            const fs = RNFetchBlob.fs;
+            let imagePath = null;
+
+            RNFetchBlob.config({
+                fileCache: true
+              })
+                .fetch("GET", route.params.data.facebookImage)
+                // the image is now dowloaded to device's storage
+                .then(resp => {
+                  // the image path you can use it directly with Image component
+                  imagePath = resp.path();
+                  return resp.readFile("base64");
+                })
+                .then(base64Data => {
+                  // here's base64 encoded image
+                  let photos = [...this.state.photos];
+                  photos[0] = {
+                    photoUrl: `data:${`image/jpeg`};base64,${base64Data}`,
+                    uri: `data:${`image/jpeg`};base64,${base64Data}`,
+                    photo: `data:${`image/jpeg`};base64,${base64Data}`, //BASE64
+                    photoType: 'cover',
+                    photoOrder: 0
+                  };
+                  console.log(photos)
+                   this.setState({photos});
+
+                  // remove the file from storage
+                  return fs.unlink(imagePath);
+                });
+           
+        }
+
 
     };
     //   getPhotos = () => {
@@ -51,7 +88,8 @@ class AddPhotosPage extends React.Component {
             ageRange: route.params.ageRange,
             looking: route.params.looking,
             distance: route.params.distance,
-            photos: this.state.photos
+            photos: this.state.photos,
+            data: route.params.data ? route.params.data : null
         })
     }
 

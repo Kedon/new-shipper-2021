@@ -78,7 +78,9 @@ class ProfileCheckPage extends React.Component {
             distance: route.params.distance,
             photos: route.params.photos,
             hobbies: route.params.hobbies,
-            type: 'USER'
+            type: 'USER',
+            facebookUserId: route.params && route.params.data && route.params.data.facebookId,
+            //data: route.params.data ? route.params.data : null
           }
 
         //let newUser = await api.create(params)

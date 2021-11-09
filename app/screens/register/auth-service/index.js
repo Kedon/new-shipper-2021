@@ -20,6 +20,15 @@ const  api =  {
         })
 
     },
+    newAuthenticationFB:  (userID) => {
+        console.log(`${domain}/${apiUrl}/login/facebook-login/${userID}`)
+        return new Promise((resolve, reject) => {
+            return  client()
+            .get(`${domain}/${apiUrl}/login/facebook-login/${userID}`)
+            .then(res => resolve(res))
+            .catch(error=> reject(error))
+        })
+    },
     authenticationFB:  (url) => {
         return new Promise((resolve, reject) => {
             return  client()

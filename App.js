@@ -47,6 +47,22 @@ import OneSignal from 'react-native-onesignal';
  LogBox.ignoreAllLogs();//Ignore all log notifications
 
 
+ OneSignal.setLogLevel(6, 0);
+ OneSignal.setAppId("81930a18-33f2-4367-9e57-cfb6280a7ffd");
+ OneSignal.setNotificationWillShowInForegroundHandler(notificationReceivedEvent => {
+   console.log("OneSignal: notification will show in foreground:", notificationReceivedEvent);
+   let notification = notificationReceivedEvent.getNotification();
+   console.log("notification: ", notification);
+   const data = notification.additionalData
+   console.log("additionalData: ", data);
+   // Complete with null means don't show a notification.
+   notificationReceivedEvent.complete(notification);
+ });
+ 
+ //Method for handling notifications opened
+ OneSignal.setNotificationOpenedHandler(notification => {
+   console.log("OneSignal: notification opened:", notification);
+ });
 
 
  //one signal 81930a18-33f2-4367-9e57-cfb6280a7ffd
@@ -63,29 +79,19 @@ import OneSignal from 'react-native-onesignal';
 
   componentDidMount = () => {
     AppState.addEventListener('change', this._handleAppStateChange);
-    OneSignal.setLogLevel(6, 0);
-    OneSignal.setAppId("81930a18-33f2-4367-9e57-cfb6280a7ffd");
-    OneSignal.setNotificationWillShowInForegroundHandler(notificationReceivedEvent => {
-      console.log("OneSignal: notification will show in foreground:", notificationReceivedEvent);
-      let notification = notificationReceivedEvent.getNotification();
-      console.log("notification: ", notification);
-      const data = notification.additionalData
-      console.log("additionalData: ", data);
-      // Complete with null means don't show a notification.
-      notificationReceivedEvent.complete(notification);
-    });
-    
-    //Method for handling notifications opened
-    OneSignal.setNotificationOpenedHandler(notification => {
-      console.log("OneSignal: notification opened:", notification);
-    });
-
-    let externalUserId = '123456789'; // You will supply the external user id to the OneSignal SDK
-    OneSignal.setExternalUserId(externalUserId);
-   // OneSignal.sendTag("USER", "VALDENIR");
 
     
     this.getUserInfo()
+  }
+
+  componentDidUpdate = (prevProps) => {
+    if(prevProps.token !==this.props.token  && this.props.token){
+      const userId = this.props.user && this.props.user.userId
+      //let externalUserId = '123456789'; // You will supply the external user id to the OneSignal SDK
+      OneSignal.setExternalUserId(userId);
+      OneSignal.sendTag("USER", userId);
+
+    }
   }
 
   async getUserInfo(){
@@ -192,7 +198,8 @@ import OneSignal from 'react-native-onesignal';
  const mapStateToProps = state => {
    return {
      chatContacts: state.chats.chatContacts,
-     user: state.userData.user
+     user: state.userData.user,
+     token: state.userData.userToken
    };
  };
  

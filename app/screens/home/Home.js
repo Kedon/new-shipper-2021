@@ -529,7 +529,6 @@ componentDidMount() {
     const { preferences, checkin, user } = this.props;
     return(
       <SafeAreaView style={[styles.container]}>
-        <TouchableOpacity onPress={this.HandleSendPush}><Text>Enviar push</Text></TouchableOpacity>
       <GpsState loadTimeline={ () => this.getTimeline()} userToken={user.userToken} />
       {!connection.isConnected ?
         <SafeAreaView style={[styles.container]}>

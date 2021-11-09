@@ -68,7 +68,8 @@ class HobbiesPage extends React.Component {
                 distance: route.params.distance,
                 genre: route.params.genre,
                 photos: route.params.photos,
-                hobbies: this.getSelectedsHobbies()
+                hobbies: this.getSelectedsHobbies(),
+                data: route.params.data ? route.params.data : null
              })
 
     }

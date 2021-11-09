@@ -21,16 +21,15 @@ class EmailPage extends React.Component {
     }
 
     next = async () => {
-        const { navigation } = this.props;
+        const { navigation, route } = this.props;
         let { email } = this.state
-
         await api.getUserByEmail({email:email }).then(res => 
             {
                 this.setState({showDownAlert: true, errorMessage: 'Você já está cadastrado. Tente recuperar a senha'})
                 // if(res && res.data && res.data.user && res.data.user.userId) {
             }
            
-        ).catch(err =>  navigation.navigate('NamePage', { email: email }))
+        ).catch(err =>  navigation.navigate('NamePage', { email: email, data: route.params.data ? route.params.data : null }))
        
     }
     placeSubmitHandler = () => {
@@ -92,14 +91,14 @@ class EmailPage extends React.Component {
           style = { styles.placeButton }
           onPress = { this.placeSubmitHandler }
         /> */}
-                    <Input
-                        inputStyle={{ color: colorTheme.PRIMARY_COLOR }}
-                        inputContainerStyle={{ borderColor: colorTheme.TEXT_MUTED }}
+                    <TextInput
+                        style={{ color: colorTheme.PRIMARY_COLOR, borderBottomWidth: 1, borderColor: colorTheme.TEXT_MUTED, paddingBottom: 10, marginLeft: 10, marginRight: 10, fontSize: 20}}
+                        inputContainerStyle={{  }}
                         placeholderTextColor={colorTheme.TEXT_MUTED}
                         placeholder='E-mail'
                         keyboardType="email-address"
                         onChangeText={textValue => this.formatUserName('email', textValue)}
-                        keyboardType={Platform.OS === 'ios' ? 'default' : 'visible-password'}
+                        keyboardType={Platform.OS === 'ios' ? 'email-address' : 'email-address'}
                         value={this.state.email}  
                         autoCapitalize='none' 
                     />

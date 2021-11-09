@@ -1,7 +1,7 @@
 // Setting screen
 import React, { Component } from 'react';
 //import react in our code.
-import { Text, View, Image, SafeAreaView, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
+import { Text, View, Image, SafeAreaView, StyleSheet, TouchableOpacity, StatusBar, TextInput } from 'react-native';
 //import all the components we are going to use.
 import colorTheme from '../../config/theme.style'
 import { Input, Button, ThemeProvider } from 'react-native-elements';
@@ -26,7 +26,7 @@ class PasswordPage extends React.Component {
                 name: route.params.name,
                 birthDate: route.params.birthDate,
                 password: password,
-
+                data: route.params.data ? route.params.data : null
         })
       }
     render() {
@@ -43,9 +43,9 @@ class PasswordPage extends React.Component {
                     <Text style={styles.title}>Minha</Text>
                     <Text style={styles.subtitle}>Senha de acesso é:</Text>
                     <View style={styles.space}></View>
-                    <Input
-                        inputStyle={{ color: colorTheme.PRIMARY_COLOR }}
-                        inputContainerStyle={{ borderColor: colorTheme.TEXT_MUTED }}
+                    <TextInput
+                        style={{ color: colorTheme.PRIMARY_COLOR, borderBottomWidth: 1, borderColor: colorTheme.TEXT_MUTED, paddingBottom: 10, marginLeft: 10, marginRight: 10, fontSize: 20}}
+                        inputContainerStyle={{  }}
                         placeholderTextColor={colorTheme.TEXT_MUTED}
                         placeholder='Senha'
                         secureTextEntry={true} 
@@ -53,9 +53,9 @@ class PasswordPage extends React.Component {
                         value={password}
                     />
                     <Text style={styles.help}>Crie uma senha composta por letras e números</Text>
-                    <Input
-                        inputStyle={{ color: colorTheme.PRIMARY_COLOR }}
-                        inputContainerStyle={{ borderColor: colorTheme.TEXT_MUTED }}
+                    <TextInput
+                        style={{ color: colorTheme.PRIMARY_COLOR, borderBottomWidth: 1, borderColor: colorTheme.TEXT_MUTED, paddingBottom: 10, marginLeft: 10, marginRight: 10, fontSize: 20}}
+                        inputContainerStyle={{  }}
                         placeholderTextColor={colorTheme.TEXT_MUTED}
                         placeholder='Confirmação'
                         secureTextEntry={true} 

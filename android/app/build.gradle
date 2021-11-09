@@ -208,6 +208,9 @@ android {
 }
 
 dependencies {
+
+    implementation 'com.facebook.android:facebook-android-sdk:latest.release'
+    
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation platform('com.google.firebase:firebase-bom:28.4.2') //FIREBASE
