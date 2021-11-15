@@ -345,7 +345,7 @@ class CustomCard extends React.Component {
                   </View>
                 </View>
               </Modal>
-              <Packages modalVisible ={showPackageModal} onPressClose={(v)=> this.hideModal(v)} />
+              <Packages userToken={this.props.userToken} modalVisible ={showPackageModal} onPressClose={(v)=> this.hideModal(v)} />
             </View>
         );
     }

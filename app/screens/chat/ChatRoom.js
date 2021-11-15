@@ -1,10 +1,8 @@
 // Home screen
 import React, { Component } from 'react';
 //import react in our code.
-import { RefreshControl, Keyboard, ActivityIndicator, KeyboardAvoidingView, TextInput, Button, Text, View, ScrollView, StyleSheet, Dimensions, TouchableOpacity, Modal, Image, ImageBackground, TouchableWithoutFeedback, Platform, AppState, Alert } from 'react-native';
-import { SafeAreaView } from 'react-navigation';
+import { RefreshControl, Keyboard, ActivityIndicator, KeyboardAvoidingView, TextInput, Button, Text, View, ScrollView, StyleSheet, Dimensions, TouchableOpacity, Modal, Image, ImageBackground, TouchableWithoutFeedback, Platform, AppState, Alert, SafeAreaView } from 'react-native';
 import colorTheme from '../../config/theme.style'
-import { withNavigation } from 'react-navigation';
 import { Rating, AirbnbRating } from 'react-native-elements';
 import CustomButton from '../../components/CustomButton';
 import UserDetailsModal from '../../components/UserDetailsModal';
@@ -52,7 +50,7 @@ class ChatRoom extends Component {
       getting: '',
       matchInfo: null,
       loading: true,
-      id: props.navigation.state.params.id,
+      id: props.route.params.id,
       chatName: '',
       messages: [],
       user: [],
@@ -60,14 +58,15 @@ class ChatRoom extends Component {
       increase: null,
       appState: AppState.currentState,
       refreshing: false,
-      blocking: false
+      blocking: false,
+      sending: false
     }
   }
 
 
   rating = (rating) => {
     isSignedIn().then((token) => {
-    const { cover }  = this.props.navigation.state.params
+    const { cover }  = this.props.route.params
       this.setState({ procesing: true })
       api.posRating(JSON.parse(token), { score: rating, type: 'POS', posMatchUserId: cover[0].receiverUserId })
         .then(res => {
@@ -120,7 +119,7 @@ class ChatRoom extends Component {
     this.chatInfo()
     //console.warn(this.props.navigation.state.params.user)
     const md5 = this.userMd5()
-    this.setState({ user: this.props.navigation.state.params.user, loading: false })
+    this.setState({ user: this.props.route.params.user, loading: false })
     //RECEBENDO AS MENSAGENS EM TEMPO REAL
     firestore()
       .collection('Chats')
@@ -312,7 +311,7 @@ class ChatRoom extends Component {
     //const { navigation } = this.props;
     const md5 = this.userMd5()
     const { navigation } = this.props;
-    const { cover }  = this.props.navigation.state.params
+    const { cover }  = this.props.route.params
     
     isSignedIn().then((token) => {
       this.setState({ hasMore: false, loadingMore: true })
@@ -389,7 +388,7 @@ class ChatRoom extends Component {
   }
 
   userMd5() {
-    let chatId = this.props.navigation.state.params.chatName
+    let chatId = this.props.route.params.chatName
     return chatId
   }
 
@@ -400,6 +399,7 @@ class ChatRoom extends Component {
     
     this.setState({ typing: false }, () => {
       if (data && data.message && data.message.length > 0) {
+        this.setState({ sending: true })
         firestore()
           .collection("Chats")
           .doc(md5)
@@ -417,7 +417,6 @@ class ChatRoom extends Component {
           .catch(function (error) {
             //  console.error("Error writing document: ", error);
           });
-
         //INSERE OU ATUALIZA UM CONTATO
         const docRef = firestore().collection("Contacts").doc(md5);
         const { contactData } = this.state
@@ -430,10 +429,10 @@ class ChatRoom extends Component {
             birthDate: this.props.activeChat.birthDate,
             blocked: false,
             firstName: this.props.activeChat.firstName,
-            hobbies: this.props.activeChat.hobbies,
+            hobbies: this.props && this.props.activeChat && this.props.activeChat.hobbies ? this.props.activeChat : [],
             isMatche: this.props.activeChat.isMatche,
             location: this.props.activeChat.location,
-            visibility: this.props.activeChat.visibility,
+            visibility: this.props.activeChat.visibility && typeof this.props.activeChat.visibility !== 'undefined' ? this.props.activeChat.visibility : null,
             photos: this.props.activeChat && this.props.activeChat.photos ? this.props.activeChat.photos : null,
             typing: false,
             unread: this.state.increase && parseFloat(contactData && contactData[0] && contactData[0].guest && contactData[0].guest.unread ? contactData[0].guest.unread : 0) + 1
@@ -444,14 +443,15 @@ class ChatRoom extends Component {
             birthDate: this.props.user.birthDate,
             blocked: false,
             firstName: this.props.user.firstName,
-            hobbies: this.props.user.hobbies,
+            hobbies: this.props && this.props.user && this.props.user.hobbies ? this.props.user.hobbies : [],
             isMatche: null,
             location: this.props.user.location,
-            visibility: this.props.user.visibility,
+            visibility: this.props.user.visibility && typeof this.props.user.visibility !== 'undefined' ? this.props.user.visibility : null,
             photos: this.props.user && this.props.user.photos ? this.props.user.photos : null,
             typing: false,
             unread: 0
           }
+
 
         } else {
           //usuário logado (eu)
@@ -463,7 +463,7 @@ class ChatRoom extends Component {
             hobbies: this.props.user.hobbies,
             isMatche: null,
             location: this.props.user.location,
-            visibility: this.props.user.visibility,
+            visibility: this.props.user.visibility && typeof this.props.user.visibility !== 'undefined' ? this.props.user.visibility : null,
             photos: this.props.user && this.props.user.photos ? this.props.user.photos : null,
             typing: false,
             unread: 0
@@ -477,7 +477,7 @@ class ChatRoom extends Component {
             hobbies: this.props.activeChat.hobbies,
             isMatche: this.props.activeChat.isMatche,
             location: this.props.activeChat.location,
-            visibility: this.props.activeChat.visibility,
+            visibility: this.props.activeChat.visibility && typeof this.props.activeChat.visibility !== 'undefined' ? this.props.activeChat.visibility : null,
             photos: this.props.activeChat && this.props.activeChat.photos ? this.props.activeChat.photos : null,
             typing: false,
             unread: this.state.increase && parseFloat(!contactData[0].owner.unread ? 0 : contactData[0].owner.unread) + 1
@@ -505,18 +505,20 @@ class ChatRoom extends Component {
         docRef.set({
           lastMessage: data.message,
           datetime: data.datetime,
-          uread: data.total,
+          //uread: data.total,
           users: [this.props.user.userId, this.props.activeChat.userId],
           contactId: md5,
           guest: guest,
           owner: owner
         }
           , { merge: true })
-          .then(function () {
-            //console.warn("Document written with ID: ");
+          .then( res => {
+            console.log(res)
+            console.warn("Document written with ID: ");
+            this.setState({ sending: false })
           })
-          .catch(function (error) {
-            //  console.error("Error writing document: ", error);
+          .catch(error =>  {
+            console.error("Error writing document: ", error);
           });
       }
     })
@@ -552,7 +554,7 @@ class ChatRoom extends Component {
     const contact = this.state.contactData && this.state.contactData[0] ? this.state.contactData[0] : {}
     Alert.alert(
       `${contact.owner.blocked || contact.guest.blocked ? 'Desbloquear' : 'Bloquear'} contato`,
-      `Tem certeza de que deseja ${contact.owner.blocked || contact.guest.blocked ? 'desbloquear' : 'bloquear'} ${this.props.navigation.state.params.cover[0].firstName}?`,
+      `Tem certeza de que deseja ${contact.owner.blocked || contact.guest.blocked ? 'desbloquear' : 'bloquear'} ${this.props.route.params.cover[0].firstName}?`,
       [
         {
           text: "Cancel",
@@ -588,7 +590,7 @@ class ChatRoom extends Component {
     const { matchInfo, loading, typingText, getting, user, contactData, increase, messages, ratingSent, blocking } = this.state;
     const { activeChat } = this.props
     const property = contactData && contactData.length > 0 ? this.props.user.userId === contactData[0].owner.userId ? 'owner' : 'guest' : null
-    const { cover }  = this.props.navigation.state.params
+    const { cover }  = this.props.route.params
 
     if (!loading) {
       return (
@@ -707,8 +709,12 @@ class ChatRoom extends Component {
                     value={this.state.addNoteText}
                     autoCorrect={true}
                   />
-                  <TouchableOpacity style={styles.sendButtom} onPress={this.buttonClickListener}>
+                  <TouchableOpacity style={styles.sendButtom} onPress={this.state.sending ? null : this.buttonClickListener}>
+                    {this.state.sending ?
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                  :
                     <Image source={require('../../assets/images/icons/send.png')} style={{ width: 17, height: 12 }} />
+                  }
                   </TouchableOpacity>
                 </View>
               }
@@ -799,7 +805,7 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withNavigation(ChatRoom));
+)(ChatRoom);
 
 
 const styles = StyleSheet.create({
@@ -989,10 +995,10 @@ const styles = StyleSheet.create({
     color: colorTheme.GREY_COLOR
   },
   sendButtom: {
-    paddingTop: 10,
-    paddingRight: 7,
-    paddingBottom: 10,
-    paddingLeft: 7,
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 3,
     marginRight: 3,
     marginBottom: 3,

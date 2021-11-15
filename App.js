@@ -90,6 +90,21 @@ import OneSignal from 'react-native-onesignal';
       //let externalUserId = '123456789'; // You will supply the external user id to the OneSignal SDK
       OneSignal.setExternalUserId(userId);
       OneSignal.sendTag("USER", userId);
+    }
+    if(prevProps.user !==this.props.user  && this.props.user){
+      const userId = this.props.user && this.props.user.userId
+      const { chatContacts } = this.props;
+      //OBTEM A LISTA DE CHATS DO USUÁRIO
+      firestore()
+      .collection("Contacts")
+      .where("users", "array-contains", this.props.user.userId)
+      .onSnapshot((querySnapshot) => {
+        const contacts = querySnapshot.docs.map((m) => {
+          return m._data
+        });
+        this.props.chatContacts(contacts)
+      })
+
 
     }
   }
@@ -98,7 +113,9 @@ import OneSignal from 'react-native-onesignal';
     const { userData, preferencesData, userToken } = this.props;
     const token = isSignedIn()
     //alert(JSON.stringify(token))
+
     if(token){
+
       userToken(JSON.parse(token))
         //OBTEM OS DADOS DO USUÁRIO 
         api.getUserInfo(JSON.parse(token))
@@ -128,17 +145,6 @@ import OneSignal from 'react-native-onesignal';
           throw error;
         });
 
-
-        //OBTEM A LISTA DE CHATS DO USUÁRIO
-        firestore()
-        .collection("Contacts")
-        .where("users", "array-contains", this.props.user.userId)
-        .onSnapshot((querySnapshot) => {
-          const contacts = querySnapshot.docs.map((m) => {
-            return m._data
-          });
-          this.props.chatContacts(contacts)
-        })
     }
     /*isSignedIn().then(async (token) => {
       //userToken(token)

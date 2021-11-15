@@ -2,18 +2,10 @@
 import React, { Component } from 'react';
 //import react in our code.
 import { Text, ActivityIndicator, RefreshControl, View, ScrollView, SafeAreaView, StyleSheet, StatusBar, FlatList, Dimensions, Image, TouchableOpacity, Alert } from 'react-native';
-import { Button } from 'react-native-elements';
 import  CustomHeader  from '../../components/Header';
 import  Contacts  from '../../components/ChatContacts';
-import  CustomButton  from '../../components/CustomButton';
 import  SearchInput  from '../../components/SearchInput';
-import colorTheme from '../../config/theme.style'
-import { withNavigation } from 'react-navigation';
-import { onSignIn, isSignedIn } from '../../config/auth';
-import { domain } from './../../config/constants'
-import api from './services'
 import  EmptyState  from '../../components/EmptyState';
-import moment from "moment";
 import { connect } from 'react-redux';
 import { chatSearch } from '../../../redux/actions/chatsActions'
 
@@ -113,7 +105,7 @@ class Chats extends Component {
                   </View>
                   :
                   <View>
-                  <Contacts items={value && value.length > 0 ? filteredContacts/*.filter( f => (!f.guest.blocked || !f.owner.blocked) )*/ : chatCont/*.filter( f => (!f.guest.blocked && !f.owner.blocked) )*/} lastMessage={this.props.message} filterContacts={this.filterContacts}/>
+                  <Contacts navigation={this.props.navigation} items={value && value.length > 0 ? filteredContacts/*.filter( f => (!f.guest.blocked || !f.owner.blocked) )*/ : chatCont/*.filter( f => (!f.guest.blocked && !f.owner.blocked) )*/} lastMessage={this.props.message} filterContacts={this.filterContacts}/>
                   </View>
                 }
                 {(loading) &&
@@ -176,4 +168,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withNavigation(Chats));
+)(Chats);

@@ -15,6 +15,7 @@ import { HomeStack } from "./screens/home/HomeStack";
 import { LikesStack } from "./screens//likes/LikesStack";
 import { CheckinStack } from "./screens/checkin/CheckinStack";
 import { ProfileStack } from "./screens/profile/ProfileStack";
+import { ChatStack } from "./screens/chat/ChatStack";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -27,13 +28,13 @@ class BottomTabNavigator extends React.Component {
     const { user, loadingAuth } = this.props.user
     const { chatCont } = this.props
         const chatCount = chatCont && chatCont.filter( f => {
-            if(this.props.user.userId === f.owner.userId){
+            if(user.userId === f.owner.userId){
               return !f.owner.blocked
             } else {
               return !f.guest.blocked
             }
           }).map((m, i, a) => {
-            if(this.props.user.userId === m.owner.userId){
+            if(user.userId === m.owner.userId){
                 return m.owner.unread ? m.owner.unread : 0
             } else {
                 return  m.guest.unread ? m.guest.unread : 0
@@ -66,7 +67,7 @@ class BottomTabNavigator extends React.Component {
         <Tab.Screen name="Timeline" options={{ tabBarLabel: 'Timeline'}} options={{headerShown: false}} component={HomeStack} />
         <Tab.Screen name="Like" options={{ tabBarLabel: 'Me curtiu'}} component={LikesStack} />
         <Tab.Screen name="Checkin" options={{ tabBarLabel: 'Check-ins'}} options={{headerShown: false}} component={CheckinStack} />
-        <Tab.Screen name="Chats" component={HomeStack} options={{ tabBarLabel: 'Chats', tabBarBadge: chatCount > 100 ? '+99' : chatCount === 100 ? '100' : chatCount > 0 ? chatCount : null }} />
+        <Tab.Screen name="Chats" options={{ tabBarLabel: 'Chats', tabBarBadge: chatCount > 100 ? '+99' : chatCount === 100 ? '100' : chatCount > 0 ? chatCount : null }} component={ChatStack} />
         <Tab.Screen name="Profile" options={{ tabBarLabel: 'Perfil'}} component={ProfileStack} />
       </Tab.Navigator>
     );

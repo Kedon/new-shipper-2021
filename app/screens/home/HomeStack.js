@@ -13,6 +13,7 @@ import Configurations from '../profile/Configurations';
 import Photos from '../profile/Photos';
 import Invite from '../profile/Invite';
 import UserProfile from '../../components/userProfile';
+import ChatRoom from "../chat/ChatRoom";
 /* HOME ROUTER */
 
 
@@ -41,6 +42,8 @@ const HomeStack = () => {
         <Stack.Screen name="Coupons" options={{headerShown: true, title: 'Cupons' }} component={Coupons} />
         <Stack.Screen name="CouponsDetails" options={{headerShown: true, title: 'Detalhes do Cupom' }} component={CouponsDetails} />
         <Stack.Screen name="UserProfile" options={{headerShown: true }} component={UserProfile} />
+        <Stack.Screen name="ChatRoom" options={{headerShown: false, title: null }} component={ChatRoom} />
+
     </Stack.Navigator>
   );
 }

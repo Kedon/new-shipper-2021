@@ -33,15 +33,15 @@ class Packages extends Component {
 
   packages = async () => {
       //const { navigation } = this.props;
-      isSignedIn().then((token) => {
+      if(this.props.userToken){
         this.setState({loading: true})
-        api.packages(JSON.parse(token))
+        api.packages(this.props.userToken)
             .then(res => {
               this.setState({packages: res.data})
             })
             .catch(err => console.warn(JSON.stringify(err)))
         }
-      );
+      
   }
 
 //   open() {

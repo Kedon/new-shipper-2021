@@ -204,7 +204,6 @@ componentDidMount() {
           }
 
         
-
         //CRIA CHAT NO FIREBASE
         this.createOrUpdateContact(resource, data.chatName)
 
@@ -244,21 +243,24 @@ componentDidMount() {
   }
 
   createOrUpdateContact = (user, chatName) => {
+    console.log(`createOrUpdateContact`)
+    console.log(`chatName: ${chatName}`)
     console.log(chatName)
+    console.log(`this.state.user: ${JSON.stringify(user)}`)
+    console.log(`user.hobbies: ${JSON.stringify(user && user.hobbies && user.hobbies.length > 0 ? user.hobbies : [])}`)
       //INSERE OU ATUALIZA UM CONTATO
       //firestore().collection("Contacts").doc(chatName).set({lastMessage: card});
-      const docRef = firestore().collection("Contacts").doc(chatName);
         //usuário da lista (contato)
         const guest = {
           userId: user.userId,
           birthDate: user.birthDate,
           blocked: false,
           firstName: user.firstName,
-          hobbies: user.hobbies,
+          hobbies: user && user.hobbies && user.hobbies.length > 0 ? user.hobbies : [],
           isMatche: null,
           location: user.location,
           //visibility: this.props.user.visibility,
-          photos: user && user.photos ?user.photos :  null,
+          photos: user && user.photos.length > 0 ? user.photos :  null,
           typing: false,
           unread: 0
         }
@@ -272,12 +274,16 @@ componentDidMount() {
           isMatche: null,
           location: this.props.user.user.location,
           //visibility: this.props.user.visibility,
-          photos: this.props.user && this.props.user.user && this.props.user.user.photos ? this.props.user.user.photos :  null,
+          photos: this.props.user && this.props.user.user && this.props.user.user.cover ? [this.props.user.user.cover] :  
+                  this.props.user && this.props.user.user && this.props.user.user.photos && this.props.user.user.photos.length > 0 ? this.props.user.user.photos.length : 
+                  null,
           typing: false,
           unread: 0
         } 
 
-        docRef.set({
+        console.log(`const owner: ${JSON.stringify(guest)}`)
+        console.log(`const owner: ${JSON.stringify(owner)}`)
+        console.log(`const botha: ${JSON.stringify({
           lastMessage: null,
           datetime: new Date(),
           uread: 0,
@@ -285,7 +291,27 @@ componentDidMount() {
           contactId: chatName,
           guest: guest,
           owner: owner
+        })}`)
+
+        firestore()
+        .collection("Contacts")
+        .doc(chatName)
+        .set({
+          lastMessage: null,
+          datetime: new Date(),
+          uread: 0,
+          users: [ this.props.user.user.userId, user.userId ],
+          contactId: chatName,
+          guest: guest,
+          owner: owner
+        }, { merge: true })
+        .then(function () {
+          console.warn("Usuário ativo salvo com sucesso: ");
         })
+        .catch(function (error) {
+          console.error("Erro no usuário ativo: ", error);
+        })
+
 
       /*const { contactData } = this.state
       let owner = ''
@@ -532,9 +558,6 @@ componentDidMount() {
       <GpsState loadTimeline={ () => this.getTimeline()} userToken={user.userToken} />
       {!connection.isConnected ?
         <SafeAreaView style={[styles.container]}>
-          <Text>{JSON.stringify(connection.isConnected)}</Text>
-          <Text>{JSON.stringify(this.props.user.userToken)}</Text>
-          
           <EmptyState title={'Buscando rede...'} description={'Parece que o seu dispositivo não está conectado à internet.'} width={width - 90} height={300} illustration={require('../../assets/images/empty_box.png')} goTo={'Preferences'} />
         </SafeAreaView>
       : !loading && timeline && timeline.length > 0 ?
@@ -615,7 +638,7 @@ componentDidMount() {
                 }
               </ScrollView>
             </View>
-          <MatchPopup ref="match" partners={this.state.partners} goToChat={this.goToChat} onPress={() => this.handleChat()} matchActions={this.matchActions} coupon={coupomMatch} offset={this.state.matchOffset} />
+          <MatchPopup ref="match" partners={this.state.partners} userToken={user.userToken} goToChat={this.goToChat} onPress={() => this.handleChat()} matchActions={this.matchActions} coupon={coupomMatch} offset={this.state.matchOffset} />
         </View>
       : !loadingMore && timeline && timeline.length === 0 ? 
         <EmptyState title={'Nada aqui, por enquanto'} description={'Altere suas configurações para encontrar pessoas.'} width={width - 90} height={300} illustration={require('../../assets/images/empty_box.png')} goTo={'Preferences'} />

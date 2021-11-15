@@ -56,7 +56,6 @@ const  api =  {
     },
 
     couponsCount: (token, couponId) => {
-      console.warn(couponId)
       return client(token)
           .post(`${domain}/${apiUrl}/coupons/stats`, {...couponId})
           .then(res => res.data)

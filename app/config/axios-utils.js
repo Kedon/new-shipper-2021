@@ -48,7 +48,7 @@ const axiosInterceptor = () => {
 
         axios.interceptors.response.use(undefined, err => {
         let res = err.response;
-        if (res.status > 300 && res.config && !res.config.__isRetryRequest) {
+        if (res && res.status > 300 && res.config && !res.config.__isRetryRequest) {
             //  if(res.status === 403 &&)
             // alert(JSON.stringify(err.response))
             // alert(JSON.stringify(err.response.status))

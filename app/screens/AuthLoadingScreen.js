@@ -105,6 +105,7 @@ class AuthLoadingScreen extends React.Component {
         isSignedIn().then(async (token) => {
             await api.getUserInfo(JSON.parse(token))
             .then(res => {
+              console.log(`resp.data: ${res}`)
               userData(res.data[0].data)
               loadingAuth(false)
               userToken(JSON.parse(token))
@@ -119,7 +120,7 @@ class AuthLoadingScreen extends React.Component {
         }, () => {
             //this.props.navigation.navigate('Auth');
             loadingAuth(false)
-        }).catch( err => console.log(err));
+        }).catch( err => console.log(`err: ${err}`));
 
         //this.props.navigation.navigate('Auth');
     }
