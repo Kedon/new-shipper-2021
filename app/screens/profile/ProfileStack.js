@@ -35,7 +35,7 @@ const ProfileStack = () => {
         <Stack.Screen name="Profile" options={{headerShown: false }} component={Profile} />
         <Stack.Screen name="Preferences" options={ (navigation) => ({headerShown: true, title: 'Preferências' }) } component={Preferences} />
         <Stack.Screen name="Hobbies" options={ (navigation) => ({headerShown: true, title: 'Hobbies' }) } component={Hobbies} />
-        <Stack.Screen name="Configurations" options={{headerShown: true }} component={Configurations} />
+        <Stack.Screen name="Configurations" options={{headerShown: true, title: 'Configurações' }} component={Configurations} />
         <Stack.Screen name="Photos" options={{headerShown: true }} component={Photos} />
         <Stack.Screen name="Invite" options={{headerShown: true }} component={Invite} />
         <Stack.Screen name="Coupons" options={{headerShown: true }} component={Coupons} />

@@ -395,7 +395,6 @@ class ChatRoom extends Component {
 
   sendMessage = (data) => {
     const md5 = this.userMd5()
-    console.warn(md5)
     
     this.setState({ typing: false }, () => {
       if (data && data.message && data.message.length > 0) {
@@ -514,11 +513,10 @@ class ChatRoom extends Component {
           , { merge: true })
           .then( res => {
             console.log(res)
-            console.warn("Document written with ID: ");
             this.setState({ sending: false })
           })
           .catch(error =>  {
-            console.error("Error writing document: ", error);
+            console.log("Error writing document: ", error);
           });
       }
     })
@@ -545,7 +543,6 @@ class ChatRoom extends Component {
           return m._data
         });
         this.setState({ messages: [...this.state.messages, ...messages] })
-        console.warn(messages)
       })
 
 

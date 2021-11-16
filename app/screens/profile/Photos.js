@@ -39,7 +39,6 @@ class Photos extends Component {
 
   userPhotos = async () => {
       //const { navigation } = this.props;
-      console.warn('user photos')
       isSignedIn().then((token) => {
         api.userPhotos(JSON.parse(token))
             .then(res => {
@@ -106,7 +105,6 @@ class Photos extends Component {
       isSignedIn().then((token) => {
         api.changePhoto(JSON.parse(token), { photo: photo, photoType: 'gallery', photoOrder: index, oldPhoto: photoId }).then(res => {
           this.setState({ ['selectedItem'+index]: false, loadingImage: false})
-           console.warn(res);
            const {photoId, photoUrl} = res.data
 
            photos[index] = {
@@ -116,7 +114,7 @@ class Photos extends Component {
 
            this.setState({photos});
 
-          }).catch(err => console.warn(JSON.stringify(err)))
+          }).catch(err => console.log(JSON.stringify(err)))
       });
     }).catch( err => {
       this.setState({loadingImage: false});
@@ -129,14 +127,13 @@ class Photos extends Component {
     isSignedIn().then((token) => {
       api.deletePhoto(JSON.parse(token), { photoId: photoId }).then(res => {
         this.setState({loadingImage: false})
-        console.warn(res)
           if(res.status == 'OK'){
             const photos = this.state.photos.filter((photo) => photo.photoId !== photoId)
             this.setState({ photos: photos })
           } else {
             Alert.alert('Não foi possível remover esta imagem. Por favor, tente novamente mais tarde.')
           }
-        }).catch(err => console.warn(JSON.stringify(err)))
+        }).catch(err => console.log(JSON.stringify(err)))
       });
 
   }

@@ -77,7 +77,7 @@ class AuthLoadingScreen extends React.Component {
         await onSignIn(data.token)
         //
       } catch (error) {
-        console.warn(error)
+        console.log(error)
       }
   
   
@@ -110,7 +110,6 @@ class AuthLoadingScreen extends React.Component {
               loadingAuth(false)
               userToken(JSON.parse(token))
               //this.props.navigation.navigate('App');
-              console.warn('logged')
             })
             .catch((error) => {
               console.log('There has been a problem with your fetch operation: ' + error.message);

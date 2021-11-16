@@ -16,7 +16,7 @@ const  api =  {
       return client(token)
           .get(`${domain}/${apiUrl}/matches/?page=${page}&offset=${offset}`)
           .then(res => res.data)
-          .catch(err => console.warn('error: -- '+ err))
+          .catch(err => console.log('error: -- '+ err))
     },
     chatCoverPhotos: (token) => {
         return new Promise((resolve, reject) => {
@@ -59,7 +59,6 @@ const  api =  {
             .catch(err => alert(err.response.data.message))
     },
     like: (token, params) => {
-      console.warn(params)
         return client(token)
             .post(`${domain}/${apiUrl}/matches`, { ...params })
             .then(res => res.data)
@@ -79,7 +78,7 @@ const  api =  {
       return pushClient(title, tagValue, icon, message)
           .post(`https://onesignal.com/api/v1/notifications`, {})
           .then(res => res.data)
-          .catch(err => console.warn(err.response.data.message))
+          .catch(err => console.log(err.response.data.message))
     },
 }
 

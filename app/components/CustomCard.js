@@ -68,7 +68,6 @@ class CustomCard extends React.Component {
       isSignedIn().then((token) => {
        api.like(JSON.parse(token), { receiverUserId: this.state.userInfo.userId, priority: priority, chatId })
        .then(res => {
-         console.warn("Response:" + JSON.stringify(res.data));
          this.setState({processing: false})
          if(res.data.isMatche) {
             this.props.cardActions('like', card, user, res.data);
@@ -76,7 +75,7 @@ class CustomCard extends React.Component {
             this.props.cardActions('like', card, user);
           }
        })
-       .catch(err => console.warn(err.message))
+       .catch(err => console.log(err.message))
     })
    }
 

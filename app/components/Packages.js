@@ -39,7 +39,7 @@ class Packages extends Component {
             .then(res => {
               this.setState({packages: res.data})
             })
-            .catch(err => console.warn(JSON.stringify(err)))
+            .catch(err => console.log(JSON.stringify(err)))
         }
       
   }

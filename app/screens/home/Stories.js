@@ -114,18 +114,14 @@ class Stories extends React.Component {
             },
           };
           ImagePicker.launchImageLibrary(options, (response) => {
-              console.warn('Response = ', response);
               const source = { uri: 'data:image/jpeg;base64,' + response.data };
               // const source = { uri: 'data:image/jpeg;base64,' + response.data };
               if (response.didCancel) {
-                  console.warn('User cancelled image picker');
                   this.createStory()
                   this.setState({showActivity: false});
               } else if (response.error) {
-                  console.warn('ImagePicker Error: ', response.error);
                   this.setState({showActivity: false});
               } else if (response.customButton) {
-                  console.warn('User tapped custom button: ', response.customButton);
                   this.setState({showActivity: false});
               } else {
                  const cover = { uri: 'data:image/jpeg;base64,' + response.data };

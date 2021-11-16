@@ -47,13 +47,12 @@ class MatchPopup extends Component {
   };
 
   updateAdsView = async (couponId) => {
-    console.warn('CoupomId: ' + couponId)
     if(this.props.userToken){
        api.couponsCount(this.props.userToken, {couponId: couponId, page: "match", metrics: "views"})
            .then(res => {
              this.updating = false;
            })
-           .catch(err => console.warn(err))
+           .catch(err => console.log(err))
        }
   }
 

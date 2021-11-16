@@ -50,7 +50,6 @@ import OneSignal from 'react-native-onesignal';
  OneSignal.setLogLevel(6, 0);
  OneSignal.setAppId("81930a18-33f2-4367-9e57-cfb6280a7ffd");
  OneSignal.setNotificationWillShowInForegroundHandler(notificationReceivedEvent => {
-   console.log("OneSignal: notification will show in foreground:", notificationReceivedEvent);
    let notification = notificationReceivedEvent.getNotification();
    console.log("notification: ", notification);
    const data = notification.additionalData
@@ -88,16 +87,17 @@ import OneSignal from 'react-native-onesignal';
     if(prevProps.token !==this.props.token  && this.props.token){
       const userId = this.props.user && this.props.user.userId
       //let externalUserId = '123456789'; // You will supply the external user id to the OneSignal SDK
-      OneSignal.setExternalUserId(userId);
-      OneSignal.sendTag("USER", userId);
     }
-    if(prevProps.user !==this.props.user  && this.props.user){
+    if(prevProps.user !==this.props.user  && this.props.user && typeof this.props.user.userId !== 'undefined'){
       const userId = this.props.user && this.props.user.userId
       const { chatContacts } = this.props;
+      OneSignal.setExternalUserId(userId);
+      OneSignal.sendTag("USER", userId);
+
       //OBTEM A LISTA DE CHATS DO USUÁRIO
       firestore()
       .collection("Contacts")
-      .where("users", "array-contains", this.props.user.userId)
+      .where("users", "array-contains", userId)
       .onSnapshot((querySnapshot) => {
         const contacts = querySnapshot.docs.map((m) => {
           return m._data
@@ -124,7 +124,6 @@ import OneSignal from 'react-native-onesignal';
           userData(res.data[0].data)
         })
         .catch(function (error) {
-          console.warn('There has been a problem with your fetch operation: ' + error.message);
           // ADD THIS THROW error
           throw error;
         });
@@ -140,7 +139,6 @@ import OneSignal from 'react-native-onesignal';
           preferencesData(params)
         })
         .catch(function (error) {
-          console.warn('There has been a problem with your fetch operation: ' + error.message);
           // ADD THIS THROW error
           throw error;
         });
@@ -164,19 +162,16 @@ import OneSignal from 'react-native-onesignal';
     if (nextAppState === 'background') {
 
       // Do something here on app background.
-      //console.warn("App is in Background Mode.")
     }
 
     if (nextAppState === 'active') {
 
       // Do something here on app active foreground mode.
-      //console.warn("App is in Active Foreground Mode.")
     }
 
     if (nextAppState === 'inactive') {
 
       // Do something here on app inactive mode.
-      //console.warn("App is in inactive Mode.")
     }
   };
 

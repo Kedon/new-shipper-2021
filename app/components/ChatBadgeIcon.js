@@ -22,10 +22,6 @@ class ChatBadgeIcon extends Component {
             }
         }).reduce((sum, x) => sum + x, 0)
             
-        
-        
-        console.warn(chatCont)
-
         return (
             <View style={styles.container}>
                 {chatCount > 0 &&

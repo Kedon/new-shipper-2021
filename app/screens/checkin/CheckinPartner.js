@@ -46,7 +46,6 @@ class CheckinPartner extends Component {
         if(this.props.token){
           api.checkin(this.props.token, this.state.companyId)
               .then(res => {
-                console.warn(res.data)
                 this.setState({
                   checkin: res.data[0],
                   loading: false,
@@ -64,7 +63,7 @@ class CheckinPartner extends Component {
                  })
               })
               .catch(function(error) {
-              console.warn('There has been a problem with your fetch operation: ' + error.message);
+              console.log('There has been a problem with your fetch operation: ' + error.message);
                // ADD THIS THROW error
                 throw error;
               });
@@ -96,7 +95,7 @@ class CheckinPartner extends Component {
             }
           })
           .catch(function(error) {
-            console.warn('There has been a problem with your fetch operation: ' + error.message);
+            console.log('There has been a problem with your fetch operation: ' + error.message);
             // ADD THIS THROW error
             throw error;
           });

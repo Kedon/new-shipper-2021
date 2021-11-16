@@ -121,9 +121,8 @@ class CustomHeader extends React.Component {
          alert('error')
        }
          this.setState({grantedLocation: granted})
-         console.warn(granted)
       } catch(err){
-        console.warn(err)
+
       }
     }*/
 
@@ -143,19 +142,16 @@ class CustomHeader extends React.Component {
       if (nextAppState === 'background') {
 
         // Do something here on app background.
-        console.warn("App is in Background Mode.")
       }
 
       if (nextAppState === 'active') {
 
         // Do something here on app active foreground mode.
-        console.warn("App is in Active Foreground Mode.")
       }
 
       if (nextAppState === 'inactive') {
 
         // Do something here on app inactive mode.
-        console.warn("App is in inactive Mode.")
       }
     };
 

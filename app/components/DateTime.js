@@ -46,7 +46,6 @@ export default class DateTime extends Component {
     } else {
       this.props.setDate(date)
       this.setState({selecteDate: date })
-       console.warn(date);
     }
     event.stopPropagation()
   }

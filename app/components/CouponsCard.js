@@ -17,7 +17,6 @@ class CouponsCard extends Component {
     this.state = {
       items: this.props.items
     }
-    console.warn(this.props.items)
   }
 
     render() {

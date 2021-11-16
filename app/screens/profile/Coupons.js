@@ -39,7 +39,7 @@ export default class Invite extends Component {
         // dismissed
       }
     } catch (error) {
-      console.warn(error.message);
+      console.log(error.message);
     }
   };
 
@@ -60,7 +60,6 @@ export default class Invite extends Component {
       isSignedIn().then((token) => {
         api.userCoupons(JSON.parse(token), {current_page: this.state.current_page, offset: this.state.offset})
             .then(res => {
-              console.warn(res)
               this.setState({
                 loading: false,
                 loadingMore: false,
@@ -72,7 +71,7 @@ export default class Invite extends Component {
                })
             })
             .catch(function(error) {
-            console.warn('There has been a problem with your fetch operation: ' + error.message);
+            console.log('There has been a problem with your fetch operation: ' + error.message);
              // ADD THIS THROW error
               throw error;
             });

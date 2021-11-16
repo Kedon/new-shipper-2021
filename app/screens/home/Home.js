@@ -79,7 +79,6 @@ class HomePage extends Component {
 
 
 componentDidMount() {
-  console.warn(JSON.stringify(this.props))
 
   // onSignOut().then(data => {
   //   const { navigation } = this.props;
@@ -96,7 +95,6 @@ componentDidMount() {
  }
 
  checkInternetConnection = () => {
-   console.warn(this.props.user.userToken)
   if(this.props.user.userToken){
     this.setState({headerToken: this.props.user.userToken}, () =>
     this.unsubscribe = NetInfo.addEventListener(state => {
@@ -104,7 +102,6 @@ componentDidMount() {
        if(this.state.connection.isConnected){
           //VERIFICAR SE OS DADOS DO USUÁRIO POSSUI A GEOLOCALIZAÇÃO
           if(this.props.user && this.props.user.user && this.props.user.user.location){
-            console.warn('mostrar a timeline')
             //this.getTimeline()
             //this.setState({gpsState: true}, () => this.getTimeline())
           } else {
@@ -131,7 +128,6 @@ componentDidMount() {
       distance: this.props.preferences && this.props.preferences.distance
     }
 
-    console.warn(params)
   
 
     if (!this.state.loadingMore) {
@@ -223,7 +219,7 @@ componentDidMount() {
               this.setState({ timeline: timelineAtualizada,  offset: this.state.offset - 1, processing: null }, () => this.tryToloadMoreCards(timelineAtualizada.length))
             }
           })
-          .catch(err => { this.MatchPopup(data); console.warn(err); })
+          .catch(err => { this.MatchPopup(data); console.log(err); })
       };
       
     }
@@ -236,7 +232,7 @@ componentDidMount() {
           .then(res => {
 
           })
-          .catch(err => console.warn(err))
+          .catch(err => console.log(err))
       }
     //this.setState({activated_at: moment(new Date()).format("YYYY-MM-DD HH:mm")});
     //
@@ -306,7 +302,7 @@ componentDidMount() {
           owner: owner
         }, { merge: true })
         .then(function () {
-          console.warn("Usuário ativo salvo com sucesso: ");
+
         })
         .catch(function (error) {
           console.error("Erro no usuário ativo: ", error);
@@ -419,7 +415,6 @@ componentDidMount() {
     //VERIFICA SE HOUVE MUDANÇA NAS PREFERÊNCIAS DO USUÁRIO
     const oldProps = JSON.stringify(prevProps.preferences);
     const newProps = JSON.stringify(this.props.preferences);
-    console.warn(this.props.preferences)
     if (oldProps != newProps) {
       this.setState({
         timeline: [],
@@ -467,9 +462,6 @@ componentDidMount() {
 
     const oldUser = JSON.stringify(prevProps.user.user);
     const newUser = JSON.stringify(this.props.user.user);
-    console.warn("USSEROLD: " + oldUser)
-    console.warn("USSENEW: " + newUser)
-    console.warn(JSON.stringify(this.props.user.userToken))
     if (oldUser != newUser) {
       //VERIFICAR SE OS DADOS DO USUÁRIO POSSUI A GEOLOCALIZAÇÃO
       if(this.props.user && this.props.user.user && (this.props.user.user.latitude && this.props.user.user.longitude )){
@@ -483,7 +475,6 @@ componentDidMount() {
       //SE POSSUIR, MOSTRAR A TIMELINE
 
       //SE NÃO POSSUIR, MOSTRAR MENSAGEM DE GPS
-      console.warn("USSERSSS: " + JSON.stringify(this.props.user.user))
     }
 
     //VERIFICA SE O TOKEN DO USUário foi setado
@@ -511,7 +502,7 @@ componentDidMount() {
             this.setState({ timeline })
           }
         })
-        .catch(err => { this.MatchPopup(data); console.warn(err); })
+        .catch(err => { this.MatchPopup(data); console.log(err); })
     };
 
 
@@ -531,7 +522,7 @@ componentDidMount() {
   }
 
   HandleSendPush = async (tagValue, msg) => {
-    console.warn(JSON.stringify(this.props.user.user.userId))
+
     try {
       let data = {
         title: `Valdenir`,
@@ -541,8 +532,8 @@ componentDidMount() {
       }
 
       let message = await api.sendPushNotification(data).then( res => {
-        console.warn(res)
-      }).catch( err => console.warn(err))
+
+      }).catch( err => console.log(err))
       //alert("OPA" + JSON.stringify(message))
     } catch (error) {
       alert(JSON.stringify(error))
@@ -600,7 +591,7 @@ componentDidMount() {
                 timeline && timeline.length > 0 && timeline.map((user, index) =>
                   user.contentType == 'user' ?
                   <View>
-                    <CustomCard key={user.userId} type={user.contentType} card={Number(index + 1)} cardViwed={this.state.cardsViewed} processing={this.state.processing} userInfo={user} cardActions={this.cardActions} />
+                    <CustomCard key={`card_${index}`} type={user.contentType} card={Number(index + 1)} cardViwed={this.state.cardsViewed} processing={this.state.processing} userInfo={user} cardActions={this.cardActions} />
                   </View>
                     :
                     user.ads.length > 0 ?

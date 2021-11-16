@@ -51,9 +51,8 @@ export default class Hobbies extends Component {
                hobbies: res.data.hobbies,
                activeHobbies: res.data.hobbies.filter(hobbies => hobbies.active)
              })
-             console.warn(res.data.hobbies)
            })
-           .catch(err => console.warn(err.response.data.message))
+           .catch(err => console.log(err.response.data.message))
        }
      );
    }

@@ -34,10 +34,8 @@ class TimelineAds extends React.Component {
 
      componentDidMount() {
        //this.getCoupons()
-       console.warn(this.props)
        this.props.coupomActions()
        //this.setState({loading: false})
-       //console.warn("ROI: " + JSON.stringify(this.props))
      }
      componentDidUpdate(nextProps, nextState){
        const {card, cardViwed} = this.props

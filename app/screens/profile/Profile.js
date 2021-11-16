@@ -181,7 +181,7 @@ class Profile extends Component {
               userData(this.state.user)
             })
   
-            }).catch(err => console.warn(JSON.stringify(err)))
+            }).catch(err => console.log(JSON.stringify(err)))
         });
       }).catch( err => {
         this.setState({loadingImage: false});

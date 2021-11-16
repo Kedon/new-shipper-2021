@@ -56,23 +56,34 @@ class GpsState extends React.Component {
       try {
           const granted =
            await check( Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_ALWAYS : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION ).then((result) => {
+             let access_state
              switch (result) {
               case RESULTS.UNAVAILABLE:
-                 return 'unavaliable';
+                console.log('RESULTS.UNAVAILABLE')
+                access_state =  'unavaliable';
                 break;
               case RESULTS.DENIED:
-                return 'permission_denied'
+                console.log('RESULTS.DENIED')
+                access_state = 'permission_denied'
                 break;
               case RESULTS.GRANTED:
-                return 'permission_granted'
+                console.log('RESULTS.GRANTED')
+                access_state = 'permission_granted'
                 break;
               case RESULTS.BLOCKED:
-                return 'permission_blocked'
+                console.log('RESULTS.BLOCKED')
+                access_state = 'permission_blocked'
                 break;
             }
+            console.log(access_state)
+            return access_state
            }).catch((error) => { return error })
-           console.warn("G: " + granted)
-       if ( granted ==  'unavaliable' ) {
+       console.log(`granted: ${granted}`)
+       if( granted == 'permission_granted') {
+        this.setState({gpsPermission: 'granted'}, () => {
+          setTimeout( () => { this.theUserPosition() }, 500);
+         })
+      } else if ( granted ==  'unavaliable' ) {
          this.setState({gpsPermission: 'unavaliable'})
        } else if(granted == 'permission_granted' && !checkSettings){ 
         const config = {
@@ -84,12 +95,7 @@ class GpsState extends React.Component {
        } else if(granted ==  'permission_denied') {
          this.setState({gpsPermission: 'danied'})
          //this.verifyLocationPermission()
-       } else if( granted == 'permission_granted') {
-         this.setState({gpsPermission: 'granted'}, () => {
-           
-           setTimeout( () => { this.theUserPosition() }, 500);
-          })
-       } else if ( granted ==  'permission_blocked' ) {
+       } else  if ( granted ==  'permission_blocked' ) {
          this.setState({gpsPermission: 'blocked'}, () => {
            Alert.alert(
              'Compartilhe sua localização',
@@ -102,13 +108,13 @@ class GpsState extends React.Component {
            )
 
          })
+         console.log(`granted: ${granted}`)
        } else {
          //alert('error')
        }
          this.setState({grantedLocation: granted})
-         console.warn(granted)
       } catch(err){
-        console.warn(err)
+        console.log(`ERROR: ${err}`)
       }
     }
 
@@ -116,6 +122,7 @@ class GpsState extends React.Component {
       await Geolocation.getCurrentPosition(
         async position => {
           const {initialLong, initialLat, lastLong, lastLat, gpsState} = this.state
+         
           if(!initialLong && !initialLat){
             await this.setState({ initialLong: position.coords.longitude, initialLat: position.coords.latitude }, () => {
               this.setState({ lastLong: position.coords.longitude, lastLat: position.coords.latitude });
@@ -124,19 +131,20 @@ class GpsState extends React.Component {
           }
         },
         error => {
-          console.log(error.code, error.message);
+          console.log(`theUserPosition: `, error.code, error.message);
+          setTimeout(() => {
+            this.theUserPosition()
+          }, 1000)
         }
       );
     }
 
     getUserLocation = async (lat, lon) => {
-      console.warn('getUserLocation')
       //if(!this.state.lastLong && !this.state.lastLat){
 
         await Geocoder.init("AIzaSyChvbAoy_fAMeQct_NRRO9RPMDakABn3CE"); // use a valid API key
         await Geocoder.from(lat, lon)
           .then( async json => {
-            console.warn("LAT:" + this.state.headerToken)
             // alert(`lat ${lat} - long ${lon}`)
             // return
 
@@ -148,7 +156,6 @@ class GpsState extends React.Component {
               //latitude: -22.7966055, longitude: -43.3529473, reverse: addressComponent
             }
             //alert(JSON.stringify(param)) //ALERT DESATIVADO
-            console.warn(addressComponent);
             if(addressComponent && addressComponent.length > 0){ //SE FICAR LENTO, REMOVER ISSO
               if(this.props.userToken){
               
@@ -169,14 +176,13 @@ class GpsState extends React.Component {
 
           })
           .catch(error =>
-            console.warn(error)
+            console.log(error)
           );
       //}
     }
 
 
     requestSettings = async () => {
-      console.warn('requestSettings')
       try {
         await Linking.openSettings('app-settings:');
       } catch (err) {
@@ -235,18 +241,24 @@ class GpsState extends React.Component {
   componentDidMount() {
       /*if(!this.state.firstLoad){
         this.setState({ app: 'active', firstLoad: true })
-        console.warn(this.state.firstLoad)
       }*/
 
       //OBTEM OS DADOS DO USUÁRIO 
       //this.getUserInfo()
+      const config = {
+        priority: HIGH_ACCURACY, // default BALANCED_POWER_ACCURACY
+        alwaysShow: false, // default false
+        needBle: false, // default false
+      };
 
-      addListener(({ locationEnabled }) => this.setState({ checkSettings: locationEnabled }, () => this.verifyLocationPermission(locationEnabled)))
-        const config = {
-            priority: HIGH_ACCURACY, // default BALANCED_POWER_ACCURACY
-            alwaysShow: false, // default false
-            needBle: false, // default false
-          };
+      addListener(({ locationEnabled }) => {
+        console.log(`Location are ${ locationEnabled ? 'enabled' : 'disabled' }`);
+        this.setState({ checkSettings: locationEnabled })
+        if(!locationEnabled){
+          requestResolutionSettings(config)
+        }
+      })
+       
           
         // Check if location is enabled or not
         checkSettings(config);
@@ -289,6 +301,12 @@ class GpsState extends React.Component {
       if(this.state.gpsPermission === 'granted' && this.state.checkSettings && !this.state.firstLoad ){
         this.setState({ firstLoad: true }, () => this.props.loadTimeline())
       }
+
+      const oldcheckSettings = prevState.checkSettings
+      const checkSettings = this.state.checkSettings
+      if(oldcheckSettings !== this.state.checkSettings && this.state.checkSettings == true){
+        this.verifyLocationPermission(this.state.checkSettings)
+      }
       
       /*const oldPermission = JSON.stringify(prevState.gpsPermission)
       const newPermission = JSON.stringify(this.state.gpsPermission)
@@ -306,7 +324,6 @@ class GpsState extends React.Component {
   render() {
     const { app } = this.props;
     const { gpsMessage, grantedLocation, gpsPermission, checkSettings, lastLong } = this.state
-    console.warn(gpsMessage)
     return (
       !checkSettings || gpsPermission !== 'granted' || !lastLong ?
         <View style={styles.centeredView}>

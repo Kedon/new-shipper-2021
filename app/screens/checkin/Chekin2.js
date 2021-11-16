@@ -52,17 +52,14 @@ export default class Checkin extends Component {
     this.setState({ hasMore: false, loadingMore: true })
     api.checkins(this.state.headerToken, { current_page: action == 'loadOlds' ? this.state.current_page : 1, offset: action == 'loadOlds' ? this.state.offset : 0 })
       .then(res => {
-        console.warn(res);
         if(res.status !== 'OK') {
           this.setState({found: this.state.checkins.length > 0 ? true : false, loading: false, loadingMore: false, refreshing: false})
           return
         }
 
-        console.warn(res)
 
         if (res.data.companies.length > 0) {
           if (action == 'refresh') {
-            console.warn("refresh: " + JSON.stringify(res))
             this.setState({
               //refreshing: false,
               found: true,

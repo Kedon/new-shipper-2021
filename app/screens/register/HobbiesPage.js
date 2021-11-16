@@ -33,7 +33,7 @@ class HobbiesPage extends React.Component {
             .then(res => {
                 this.setState({loader: false, data: res.data.hobbies})
             })
-            .catch(err => console.warn(err))
+            .catch(err => console.log(err))
     }
 
     selectHobbie = (index) => {

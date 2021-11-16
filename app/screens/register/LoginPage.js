@@ -46,8 +46,8 @@ class LoginPage extends React.Component {
       appReady: false,
       rootKey: Math.random(),
       photos: [],
-      email: 'anitta@kedon.com.br',
-      password: '123456',
+      email: '',
+      password: '',
       //email: '',
       //password: '',
       showDownAlert: false,
@@ -83,7 +83,7 @@ class LoginPage extends React.Component {
       //alert(user)
 
     } catch (error) {
-      console.warn(JSON.stringify(error))
+      console.log(JSON.stringify(error))
     }
   }
   resetAnimation() {
@@ -156,7 +156,7 @@ class LoginPage extends React.Component {
         this.appSignIn(res.data)
       })
       .catch(err => {
-        this.setState({ showDownAlert: true, errorMessage: err && err.data && err.data.message })
+        this.setState({ showDownAlert: true, errorMessage: err && err.data && err.data.message, loading: false })
         console.log(JSON.stringify(err))
       })
   }
@@ -170,7 +170,7 @@ class LoginPage extends React.Component {
       await onSignIn(data.token)
       //
     } catch (error) {
-      console.warn(error)
+      console.log(error)
     }
 
 
@@ -208,7 +208,6 @@ class LoginPage extends React.Component {
         async (result) => {
           if (result.isCancelled) {
             this.setState({ loading: false })
-            console.warn("Login cancelled");
           } else {
             //this.setState({ loading: false })
             setTimeout(async () => {
@@ -223,7 +222,7 @@ class LoginPage extends React.Component {
         },
         (error) => {
           this.setState({ loading: false })
-          console.warn("Login fail with error: " + error);
+          console.log("Login fail with error: " + error);
         }
       );
     }
@@ -269,7 +268,6 @@ class LoginPage extends React.Component {
       //OBTEM AS PREFERENCIAS DO USUARIO 
       await api.userPreferences(token)
       .then(res => {
-        console.warn(JSON.stringify(res))
         const { minAge, maxAge, looking, distance } = res.data[0]
         const params = {
           ageRange: minAge+","+maxAge,

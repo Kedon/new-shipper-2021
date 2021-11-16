@@ -15,32 +15,31 @@ const  api =  {
       return client(token)
           .get(`${domain}/${apiUrl}/appAds/${type}`)
           .then(res => res.data)
-          .catch(err => console.warn(err.response.data.message))
+          .catch(err => console.log(err.response.data.message))
     },
     packages: (token) => {
       return client(token)
           .get(`${domain}/${apiUrl}/packages`)
           .then(res => res.data)
-          .catch(err => console.warn(err.response.data.message))
+          .catch(err => console.log(err.response.data.message))
     },
     postStorie: (token, params) => {
-        console.warn('Envio para a api')
         return client(token)
         .post(`${domain}/${apiUrl}/stories`, {params})
         .then(res => res.data)
-        .catch(err => console.warn(err))
+        .catch(err => console.log(err))
     },
     myStorie: (token) => {
         return client(token)
         .get(`${domain}/${apiUrl}/stories/own`)
         .then(res => res.data)
-        .catch(err => console.warn(err))
+        .catch(err => console.log(err))
     },
     stories: (token, params) => {
         return client(token)
         .get(`${domain}/${apiUrl}/stories`, {params})
         .then(res => res.data)
-        .catch(err => console.warn(err))
+        .catch(err => console.log(err))
     },
 
 

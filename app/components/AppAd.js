@@ -44,7 +44,7 @@ class AppAd extends Component {
            .then(res => {
              this.setState({ads: res.data, loading: false})
            })
-           .catch(err => console.warn(JSON.stringify(err)))
+           .catch(err => console.log(JSON.stringify(err)))
        }
      );
  }

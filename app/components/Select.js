@@ -36,7 +36,6 @@ export default class Select extends Component {
   render() {
     const { show, date, mode, datepickerHide } = this.state;
     const { options, showGenreList, clickShowGenresList, selected, selectGenre } = this.props;
-    console.warn(options);
     return (
       <View style={{position:'relative'}}>
 

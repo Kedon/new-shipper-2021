@@ -33,31 +33,31 @@ const api = {
         return client(token)
             .post(`${domain}/${apiUrl}/timeline/remove/${id}`)
             .then(res => res.data)
-            .catch(err => console.warn(err.response.data.message))
+            .catch(err => console.log(err.response.data.message))
     },
     removeAd: (token, id) => {
         return client(token)
             .post(`${domain}/${apiUrl}/timeline/remove/ad/${id}`)
             .then(res => res.data)
-            .catch(err => console.warn(err.response.data.message))
+            .catch(err => console.log(err.response.data.message))
     },
     like: (token, params) => {
         return client(token)
             .post(`${domain}/${apiUrl}/matches`, { ...params })
             .then(res => res.data)
-            .catch(err => console.warn(err.message))
+            .catch(err => console.log(err.message))
     },
     unlike: (token, userId) => {
         return client(token)
             .delete(`${domain}/${apiUrl}/matches/${userId}`, {})
             .then(res => res.data)
-            .catch(err => console.warn(err.message))
+            .catch(err => console.log(err.message))
     },
     block: (token, userId, action) => {
         return client(token)
             .post(`${domain}/${apiUrl}/timeline/block/${userId}`, { ...action })
             .then(res => res.data)
-            .catch(err => console.warn(err.message))
+            .catch(err => console.log(err.message))
     },
     coupons: (token, params) => {
         return client(token)
@@ -81,13 +81,13 @@ const api = {
         return pushClient(title, tagValue, icon, message)
             .post(`https://onesignal.com/api/v1/notifications`, {})
             .then(res => res.data)
-            .catch(err => console.warn(err.response.data.message))
+            .catch(err => console.log(err.response.data.message))
     },
     stories: (token, params) => {
         return client(token)
         .get(`${domain}/${apiUrl}/stories`, {params})
         .then(res => res.data)
-        .catch(err => console.warn(err))
+        .catch(err => console.log(err))
     },
     userPreferences: (token, params) => {
         return client(token)

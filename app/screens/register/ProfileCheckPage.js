@@ -79,7 +79,7 @@ class ProfileCheckPage extends React.Component {
             photos: route.params.photos,
             hobbies: route.params.hobbies,
             type: 'USER',
-            facebookUserId: route.params && route.params.data && route.params.data.facebookId,
+            facebookUserId: route.params && route.params.data && route.params.data.facebookId ? route.params.data.facebookId : null,
             //data: route.params.data ? route.params.data : null
           }
 
@@ -88,7 +88,7 @@ class ProfileCheckPage extends React.Component {
           if(res.status == 'OK'){
             this.setState({ loading: false }, () => this.props.navigation.navigate('LoginPage', {source: 'register', email: route.params.email, password: route.params.password}));
           }
-         }).catch(err => console.warn(JSON.stringify(err)))
+         }).catch(err => console.log(JSON.stringify(err)))
 
         //let userData = await api.getUserByEmail({email: params.email})
         //let userAttr = userData.data.user
@@ -175,7 +175,11 @@ class ProfileCheckPage extends React.Component {
                     </Text>
 
                   <View style={styles.actionButton}>
-                      <Button title='Finalizar' onPress={this.saveUser} />
+                  {this.state.sending ?
+                    <ActivityIndicator size="small" color={colorTheme.PRIMARY_COLOR} />
+                    :
+                      <Button title='Finalizar' disabled={this.state.loading} onPress={this.saveUser} />
+                  }
                   </View>
                 </ThemeProvider>
 

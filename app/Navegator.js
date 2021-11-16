@@ -43,8 +43,6 @@ function SettingsScreen() {
  
    render() {
      const { user, loadingAuth } = this.props.user
-     console.warn(`user W: ${JSON.stringify(user)}`)
-     console.warn(`loading W: ${JSON.stringify(loadingAuth)}`)
     return (
       <NavigationContainer theme={navTheme}>
         {loadingAuth === null ?

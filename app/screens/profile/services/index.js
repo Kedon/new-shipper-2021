@@ -82,7 +82,6 @@ const  api =  {
           .catch(err => err.response)
     },
     updateUserConfigurations: (token, params) => {
-      console.warn(params)
       return client(token)
           .put(`${domain}/${apiUrl}/users/profile/configurations`, {params})
           .then(res => res.data)
@@ -127,7 +126,6 @@ const  api =  {
     },
 
     deletePhoto: (token, params) => {
-      console.warn(params);
         return client(token)
             .delete(`${domain}/${apiUrl}/users/profile/deletePhoto`, {params})
             .then(res => res.data)

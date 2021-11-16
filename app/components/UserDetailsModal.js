@@ -60,7 +60,6 @@ class UserDetailsModal extends Component {
 
   open(userId) {
     this.setState({ modalVisible: true });
-    console.warn(userId);
     this.userDetails(userId);
   };
 
@@ -82,13 +81,12 @@ class UserDetailsModal extends Component {
       isSignedIn().then((token) => {
         api.userDetails(JSON.parse(token), userId)
             .then( (res) => {
-                console.warn(res.data[0].data)
                 this.setState({
                   loading: false,
                   details: res.data[0].data,
                 }, () => {})
             })
-            .catch(err => console.warn(JSON.stringify(err)))
+            .catch(err => console.log(JSON.stringify(err)))
         }
       );
   }

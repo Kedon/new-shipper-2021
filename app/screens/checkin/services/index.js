@@ -31,7 +31,6 @@ const  api =  {
           .catch(err => err.response.data.message)
     },
     doCheck: (token, companyId, action, checkinId) => {
-      console.warn(checkinId)
       return client(token)
           .post(`${domain}/${apiUrl}/companies/checkins/${companyId}/${action}`, {checkinId})
           .then(res => res)

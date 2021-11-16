@@ -58,19 +58,6 @@ class GenrePage extends React.Component {
               data: route.params.data ? route.params.data : null
             })
         }
-
-        console.warn({
-            //email: route.params.email,
-            //name: route.params.name,
-            //birthDate: route.params.birthDate,
-            //password: route.params.password,
-            ageRange: minAge+","+maxAge,
-            looking: male && female ? 'MALE,FEMALE' : male ? 'MALE' : female ? 'FEMALE' : null,
-            distance: distance,
-            genre: genre
-    })
-
-
     }
     render() {
         const { state, goBack } = this.props.navigation;

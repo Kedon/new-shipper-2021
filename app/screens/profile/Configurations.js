@@ -77,7 +77,7 @@ class Configurations extends Component {
       occupation: occupation,
       description: description,
       visibility: visibility || visibility === 1 ? 1 : 0,
-      stopNotification:  stopNotification || stopNotification === 1 ? 1 : 0
+      stopNotification:  stopNotification ? 0 : 1
     })
   }
 
@@ -112,7 +112,7 @@ class Configurations extends Component {
             occupation: res.data[0].occupation,
             description: res.data[0].description,
             visibility: res.data[0].visibility,
-            stopNotification: res.data[0].stopNotification
+            stopNotification: res.data[0].stopNotification === 1 ? false : true
           })
 
         })
@@ -132,7 +132,7 @@ class Configurations extends Component {
         .then(res => {
           const { userDataUpdate } = this.props;
           userDataUpdate(params)
-          OneSignal.sendTag('USER', !stopNotification ? this.props.user.userId : `not-receiving`)
+          OneSignal.sendTag('USER', !stopNotification ? this.props.user.user.userId : `not-receiving`)
           if(changeVisibility){
             const { navigation } = this.props;
             navigation.navigate('Timeline', { data: {} })
@@ -287,9 +287,9 @@ class Configurations extends Component {
             <View style={styles.switchContainer}>
               <Switches
                 switchId={'stopNotification'} //same state element name
-                switchValue={stopNotification === 1 ? true : false}
+                switchValue={stopNotification}
                 switchLabel={'Notificações'}
-                switchDescription={'Quando esta opção estiver marcada, você não receberá notificações quando outro usuário enviar mensagens para você.'}
+                switchDescription={'Ao desativar essa opção, você não receberá mais notificações quando outra pessoa enviar mensagens para você.'}
                 onChange={this.onchangeNotification}
                 ref="change"
               />

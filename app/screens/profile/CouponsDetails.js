@@ -63,9 +63,8 @@ export default class Invite extends Component {
                  loading: false,
                  details: res.data[0]
                })
-               console.warn(this.state.details)
              })
-             .catch(err => alert(err.response.data.message))
+             .catch(err => console.log(err.response.data.message))
          }
        );
    }
@@ -98,10 +97,9 @@ export default class Invite extends Component {
                })
               )
               this.showModal('Tudo certo!', 'Seu cupom foi ativado com sucesso e pode ser acessado através da área de cupons do seu perfil.')
-              console.warn(res)
              }
            })
-           .catch(err => console.warn(err))
+           .catch(err => console.log(err))
        }
      );
      //this.setState({activated_at: moment(new Date()).format("YYYY-MM-DD HH:mm")});

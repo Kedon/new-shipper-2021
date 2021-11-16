@@ -13,7 +13,6 @@ const initialState = {
       case "CHAT_CONTACTS":
         return { ...state, chatCont: action.chatCont }
       case "CHAT_SEARCH":
-        console.warn(action.term)
         let filteredContacts = state.chatCont && state.chatCont.filter(val => {
           if (action.term.length > 0) {
             return (

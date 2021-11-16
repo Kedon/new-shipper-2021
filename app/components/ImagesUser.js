@@ -82,7 +82,6 @@ export default class ImagesUser extends Component {
             </View>
           )
         }
-        //console.warn(this.props)
         return null;
     }
 }

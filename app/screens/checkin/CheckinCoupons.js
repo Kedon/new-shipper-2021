@@ -66,7 +66,6 @@ class CheckinCoupons extends Component {
                })
             })
             .catch(function(error) {
-            console.warn('There has been a problem with your fetch operation: ' + error.message);
              // ADD THIS THROW error
               throw error;
             });

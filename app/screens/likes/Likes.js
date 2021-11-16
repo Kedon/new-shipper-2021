@@ -69,7 +69,6 @@ class Likes extends Component {
         this.setState({hasMore: false, loadingMore: true})
         api.likes(this.props.token, {offset: this.state.offset})
             .then(res => {
-              console.warn(res);
               if(res.status !== 'OK') {
                 this.setState({found: this.state.likes.length > 0 ? true : false, loading: false, loadingMore: false, refreshing: false})
                 return
